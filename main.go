@@ -49,8 +49,12 @@ var guildID = "638760361369010177"
 var channelID = "918866377899655238"
 var messageID = "918876972468289566"
 
+var geriraID = "💛"
+var seichiID = "💚"
+
 func initReaction(bot *discordgo.Session) {
-	err := bot.MessageReactionAdd(channelID, messageID, "💛")
+	err := bot.MessageReactionAdd(channelID, messageID, geriraID)
+	err = bot.MessageReactionAdd(channelID, messageID, seichiID)
 	if err != nil {
 		fmt.Println("error init reaction,", err)
 		return
@@ -58,16 +62,19 @@ func initReaction(bot *discordgo.Session) {
 }
 
 func addReaction(bot *discordgo.Session, reaction *discordgo.MessageReactionAdd) {
-	if reaction.GuildID != guildID {
-		return
-	}
-	if reaction.MessageID != messageID {
+	if (reaction.GuildID != guildID) && (reaction.MessageID != messageID) {
 		return
 	}
 
 	switch reaction.Emoji.Name {
-	case "💛":
+	case geriraID:
 		err := bot.GuildMemberRoleAdd(guildID, reaction.UserID, "918889974399639614")
+		if err != nil {
+			fmt.Println("error add role,", err)
+			return
+		}
+	case seichiID:
+		err := bot.GuildMemberRoleAdd(guildID, reaction.UserID, "889077232209895454")
 		if err != nil {
 			fmt.Println("error add role,", err)
 			return
@@ -84,8 +91,14 @@ func removeReaction(bot *discordgo.Session, reaction *discordgo.MessageReactionR
 	}
 
 	switch reaction.Emoji.Name {
-	case "💛":
+	case geriraID:
 		err := bot.GuildMemberRoleRemove(guildID, reaction.UserID, "918889974399639614")
+		if err != nil {
+			fmt.Println("error remove role,", err)
+			return
+		}
+	case seichiID:
+		err := bot.GuildMemberRoleRemove(guildID, reaction.UserID, "889077232209895454")
 		if err != nil {
 			fmt.Println("error remove role,", err)
 			return
