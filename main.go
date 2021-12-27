@@ -74,6 +74,7 @@ func addReaction(bot *discordgo.Session, reaction *discordgo.MessageReactionAdd)
 		fmt.Println("error add role,", err)
 		return
 	}
+	sendDM(bot, reaction.UserID, "ロールを付与しました✅")
 }
 
 func removeReaction(bot *discordgo.Session, reaction *discordgo.MessageReactionRemove) {
@@ -85,6 +86,19 @@ func removeReaction(bot *discordgo.Session, reaction *discordgo.MessageReactionR
 	err := bot.GuildMemberRoleRemove(guildID, reaction.UserID, role)
 	if err != nil {
 		fmt.Println("error remove role,", err)
+		return
+	}
+	sendDM(bot, reaction.UserID, "ロールを削除しました✅")
+}
+
+func sendDM(bot *discordgo.Session, userID string, message string) {
+	channel, err := bot.UserChannelCreate(userID)
+	if err != nil {
+		return
+	}
+	_, err = bot.ChannelMessageSend(channel.ID, message)
+	if err != nil {
+		fmt.Println("error sending DM,", err)
 		return
 	}
 }
