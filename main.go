@@ -49,11 +49,12 @@ func main() {
 }
 
 var guildID = "638760361369010177"
+var channelID = "918866377899655238"
 var messageID = "918876972468289566"
 
 func initReaction(bot *discordgo.Session) {
 	for emoji := range roles {
-		err := bot.MessageReactionAdd(guildID, messageID, emoji)
+		err := bot.MessageReactionAdd(channelID, messageID, emoji)
 		if err != nil {
 			fmt.Println("error init reaction,", err)
 			return
@@ -63,7 +64,7 @@ func initReaction(bot *discordgo.Session) {
 }
 
 func addReaction(bot *discordgo.Session, reaction *discordgo.MessageReactionAdd) {
-	if (reaction.GuildID != guildID) && (reaction.MessageID != messageID) {
+	if (reaction.GuildID != guildID) && (reaction.ChannelID != channelID) && (reaction.MessageID != messageID) {
 		return
 	}
 
@@ -76,7 +77,7 @@ func addReaction(bot *discordgo.Session, reaction *discordgo.MessageReactionAdd)
 }
 
 func removeReaction(bot *discordgo.Session, reaction *discordgo.MessageReactionRemove) {
-	if (reaction.GuildID != guildID) && (reaction.MessageID != messageID) {
+	if (reaction.GuildID != guildID) && (reaction.ChannelID != channelID) && (reaction.MessageID != messageID) {
 		return
 	}
 
