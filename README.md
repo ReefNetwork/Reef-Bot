@@ -4,6 +4,7 @@
 
 #How to use
 ```bash
+go get
 go build
-./reef_bot -t "your bot token"
+reef_bot -t "your bot token"
 ```
