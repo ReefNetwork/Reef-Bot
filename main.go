@@ -10,7 +10,9 @@ import (
 )
 
 var (
-	token string
+	token   string
+	guildID = "638760361369010177"
+
 	roles = map[string]string{
 		"💛": "918889974399639614",
 		"💚": "889077232209895454"}
@@ -49,5 +51,3 @@ func main() {
 	//goland:noinspection GoUnhandledErrorResult
 	bot.Close()
 }
-
-var guildID = "638760361369010177"
