@@ -18,6 +18,10 @@ var (
 		"💚": "889077232209895454",
 		"💙": "936600142637830184",
 	}
+
+	joinRoles = map[string]string{
+		"⛏": "982904224532815932",
+	}
 )
 
 func init() {
@@ -32,10 +36,13 @@ func main() {
 		return
 	}
 
+	bot.AddHandler(onJoinRoleHandler)
 	bot.AddHandler(onAddReactionRoleHandler)
 	bot.AddHandler(onRemoveReactionRoleHandler)
 
 	bot.AddHandler(onAddReactionQuestionHandler)
+
+	bot.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAll)
 
 	err = bot.Open()
 	if err != nil {
@@ -43,8 +50,8 @@ func main() {
 		return
 	}
 
-	fmt.Println("Bot is now running.")
 	initReaction(bot)
+	fmt.Println("Bot is now running.")
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)

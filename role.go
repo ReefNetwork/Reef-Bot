@@ -7,6 +7,7 @@ import (
 
 var roleChannelID = "918866377899655238"
 var roleMessageID = "918876972468289566"
+var joinRoleMessageID = "983017946827866132"
 
 func initReaction(bot *discordgo.Session) {
 	for emoji := range roles {
@@ -16,12 +17,33 @@ func initReaction(bot *discordgo.Session) {
 			return
 		}
 	}
+	for emoji := range joinRoles {
+		err := bot.MessageReactionAdd(roleChannelID, joinRoleMessageID, emoji)
+		if err != nil {
+			fmt.Println("error init join reaction,", err)
+			return
+		}
+	}
+}
+
+func onJoinRoleHandler(bot *discordgo.Session, join *discordgo.GuildMemberAdd) {
+	if join.GuildID == guildID {
+		for _, role := range joinRoles {
+			go addRole(bot, join.User.ID, role, false)
+		}
+	}
 }
 
 func onAddReactionRoleHandler(bot *discordgo.Session, reaction *discordgo.MessageReactionAdd) {
-	if (reaction.GuildID == guildID) && (reaction.ChannelID == roleChannelID) && (reaction.MessageID == roleMessageID) {
-		role := roles[reaction.Emoji.Name]
-		go addRole(bot, reaction.UserID, role)
+	if (reaction.GuildID == guildID) && (reaction.ChannelID == roleChannelID) {
+		if reaction.MessageID == roleMessageID {
+			role := roles[reaction.Emoji.Name]
+			go addRole(bot, reaction.UserID, role, true)
+		}
+		if reaction.MessageID == joinRoleMessageID {
+			role := joinRoles[reaction.Emoji.Name]
+			go addRole(bot, reaction.UserID, role, true)
+		}
 	}
 }
 
@@ -32,13 +54,15 @@ func onRemoveReactionRoleHandler(bot *discordgo.Session, reaction *discordgo.Mes
 	}
 }
 
-func addRole(bot *discordgo.Session, userID string, role string) {
+func addRole(bot *discordgo.Session, userID string, role string, isNotice bool) {
 	err := bot.GuildMemberRoleAdd(guildID, userID, role)
 	if err != nil {
 		fmt.Println("error add role,", err)
 		return
 	}
-	sendDM(bot, userID, "ロールを付与しました✅")
+	if isNotice {
+		sendDM(bot, userID, "ロールを付与しました✅")
+	}
 }
 
 func removeRole(bot *discordgo.Session, userID string, role string) {
