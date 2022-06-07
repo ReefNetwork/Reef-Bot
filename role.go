@@ -48,9 +48,15 @@ func onAddReactionRoleHandler(bot *discordgo.Session, reaction *discordgo.Messag
 }
 
 func onRemoveReactionRoleHandler(bot *discordgo.Session, reaction *discordgo.MessageReactionRemove) {
-	if (reaction.GuildID == guildID) && (reaction.ChannelID == roleChannelID) && (reaction.MessageID == roleMessageID) {
-		role := roles[reaction.Emoji.Name]
-		go removeRole(bot, reaction.UserID, role)
+	if (reaction.GuildID == guildID) && (reaction.ChannelID == roleChannelID) {
+		if reaction.MessageID == roleMessageID {
+			role := roles[reaction.Emoji.Name]
+			go removeRole(bot, reaction.UserID, role)
+		}
+		if reaction.MessageID == joinRoleMessageID {
+			role := joinRoles[reaction.Emoji.Name]
+			go removeRole(bot, reaction.UserID, role)
+		}
 	}
 }
 
